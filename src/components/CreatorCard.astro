@@ -11,14 +11,15 @@ interface Props {
 
 const { creator, score, userVote, rank } = Astro.props;
 const hook = creator.voice.hooks[0] ?? '';
-const pic = avatarUrl(creator.slug);
+const pic = avatarUrl(creator);
 ---
 
 <article class="card" data-name={`${creator.name} ${creator.handle} ${creator.tagline}`.toLowerCase()}>
   <span class="rank">{String(rank).padStart(2, '0')}</span>
   <div class="card-top">
     <a href={`/@${creator.slug}`} class="avatar" aria-hidden="true">
-      {pic ? <img src={pic} alt="" loading="lazy" /> : creator.emoji}
+      <span class="avatar-emoji">{creator.emoji}</span>
+      {pic && <img src={pic} alt="" loading="lazy" onerror="this.remove()" />}
     </a>
     <div class="card-id">
       <a href={`/@${creator.slug}`} class="card-name">{creator.name}</a>

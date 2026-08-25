@@ -30,8 +30,8 @@ JSON file. If you can fill out a template, you can ship one.
 2. Do the homework. Read the creator's last ~50 posts before writing a word of the
    voice DNA. The clone is only as good as the file.
 3. Fill out the schema below.
-4. Optionally drop a profile pic at `src/assets/avatars/<slug>.jpg`. Without one
-   they get an emoji avatar, which is honestly fine too.
+4. Set `links.X` in the JSON. The profile pic is pulled live from X and stays
+   current if the creator ever changes it.
 5. Open a PR. Merged files go live instantly and start collecting votes at zero.
 
 The best reference file right now is [`data/creators/florin-pop.json`](data/creators/florin-pop.json).

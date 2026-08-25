@@ -65,7 +65,7 @@ const schemaExample = `{
     <ul>
       <li><code>slug</code> — lowercase-with-dashes, becomes the URL (<code>/florin-pop</code>)</li>
       <li>Votes are real and start at 0 — no seeding, the internet decides</li>
-      <li>Drop a profile pic at <code>public/avatars/&lt;slug&gt;.jpg</code> to replace the emoji avatar</li>
+      <li><strong style="color:var(--text);">Profile pic required.</strong> Set <code>links.X</code> and it's pulled live from their X profile — stays current if they ever change it. PRs without it are rejected at build.</li>
       <li><code>voice.patterns[].template</code> — literal skeletons with [placeholders]. Copy-paste friendly is the goal.</li>
       <li><code>voice.never</code> — the fastest way to ruin a clone is missing what they'd never say. Be thorough here.</li>
       <li><code>quality_check</code> — pre-flight rules the AI runs before responding. These make or break output quality.</li>

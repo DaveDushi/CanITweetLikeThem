@@ -251,7 +251,9 @@ code, pre { font-family: var(--mono); }
   border-radius: 12px;
   overflow: hidden;
 }
+.avatar-emoji { grid-area: 1 / 1; }
 .avatar img {
+  grid-area: 1 / 1;
   width: 100%;
   height: 100%;
   object-fit: cover;

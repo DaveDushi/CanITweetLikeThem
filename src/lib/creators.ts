@@ -47,27 +47,23 @@ export const creators: Creator[] = Object.values(files).map(
 
 export const categories = [...new Set(creators.map((c) => c.category))].sort();
 
-const avatarMods = import.meta.glob(
-  '../assets/avatars/*.{jpg,jpeg,png,webp}',
-  { eager: true, query: '?url', import: 'default' },
-) as Record<string, string>;
-
-const avatarCache = new Map<string, string | null>();
-
-/** Bundled avatar URL if we have one, else null (caller falls back to emoji). */
-export function avatarUrl(slug: string): string | null {
-  if (avatarCache.has(slug)) return avatarCache.get(slug)!;
-  let url: string | null = null;
-  for (const [key, value] of Object.entries(avatarMods)) {
-    const file = key.split('/').pop() ?? '';
-    const dot = file.lastIndexOf('.');
-    if (dot > 0 && file.slice(0, dot) === slug) {
-      url = value;
-      break;
-    }
+/** X screen name from links.X (or the @handle field), without the @. */
+export function xHandle(creator: Creator): string | null {
+  const x = creator.links.X ?? creator.links.x;
+  if (x) {
+    const m = x.match(/(?:^|\/\/)(?:www\.)?x\.com\/([A-Za-z0-9_]+)/);
+    if (m) return m[1];
   }
-  avatarCache.set(slug, url);
-  return url;
+  const stripped = creator.handle.replace(/^@/, '');
+  return stripped || null;
+}
+
+/** Live X profile pic — follows the creator if they change it. */
+export function avatarUrl(creator: Creator): string | null {
+  const handle = xHandle(creator);
+  return handle
+    ? `https://unavatar.io/x/${encodeURIComponent(handle)}?fallback=false`
+    : null;
 }
 
 export function getCreator(slug: string): Creator | undefined {

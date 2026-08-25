@@ -36,7 +36,7 @@ if (voterId) {
 }
 
 const skillMd = buildSkillMd(creator);
-const pic = avatarUrl(creator.slug);
+const pic = avatarUrl(creator);
 const rank = [...scores.entries()].sort((a, b) => b[1] - a[1]).findIndex(([s]) => s === creator.slug) + 1;
 
 const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
@@ -45,7 +45,10 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
 <Base title={`${creator.name} · Can I Tweet Like Them?`} description={`Can AI tweet like ${creator.name}? Download the skill and find out — your agent writes posts exactly like ${creator.handle}.`}>
   <div class="wrap">
     <section class="detail-hero">
-      <div class="avatar detail-avatar">{pic ? <img src={pic} alt={creator.name} /> : creator.emoji}</div>
+      <div class="avatar detail-avatar">
+        <span class="avatar-emoji">{creator.emoji}</span>
+        {pic && <img src={pic} alt={creator.name} onerror="this.remove()" />}
+      </div>
       <div style="min-width:0;flex:1;">
         <p class="hero-kicker" style="margin-bottom:8px;">#{rank} · {score.toLocaleString()} votes</p>
         <h1>{creator.name}</h1>

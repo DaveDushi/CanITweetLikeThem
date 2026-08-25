@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "astro dev",
     "agent:dev": "npm run dev --prefix agent",
-    "build": "astro build",
+    "build": "node scripts/check-creators.mjs && astro build",
     "preview": "npm run build && npm run build --prefix agent && set CLOUDFLARE_ACCOUNT_ID=972f8c0c21865ac5fa34b14cfb73479e&& wrangler dev -c dist/server/wrangler.json -c agent/dist/canitweetlikethem_agent/wrangler.json",
     "deploy": "npm run build && wrangler deploy -c dist/server/wrangler.json",
     "agent:deploy": "npm run build --prefix agent && npm run deploy --prefix agent",
