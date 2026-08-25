@@ -175,7 +175,9 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
 
     btn.addEventListener('click', async () => {
       btn.disabled = true;
-      btn.textContent = 'generating…';
+      const stopCycle = window.__statusCycle
+        ? window.__statusCycle(btn)
+        : null;
       errEl.classList.add('hidden');
       out.classList.add('hidden');
 
@@ -201,6 +203,7 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
         errEl.textContent = '⚠ ' + (err.message || 'something went wrong');
         errEl.classList.remove('hidden');
       } finally {
+        if (stopCycle) stopCycle();
         btn.disabled = false;
         btn.textContent = '✨ generate tweet';
       }

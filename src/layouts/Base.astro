@@ -77,6 +77,33 @@ const tickerText = tickerItems.map((c) => `${c.name} ▲ ${scores.get(c.slug) ??
         toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
       }
 
+      const STATUS_PHRASES = [
+        'reading their tweets…',
+        'studying the vibe…',
+        'stealing their cadence…',
+        'cloning voice…',
+        'channeling main character energy…',
+        'writing…',
+        'deleting the boring drafts…',
+        'second-guessing the opener…',
+        'polishing hot takes…',
+        'cutting it down to 280…',
+        'counting characters…',
+        'adding a little spice…',
+        'almost there…',
+      ];
+
+      function startStatusCycle(el: HTMLElement): () => void {
+        let i = Math.floor(Math.random() * STATUS_PHRASES.length);
+        el.textContent = STATUS_PHRASES[i]!;
+        const timer = setInterval(() => {
+          i = (i + 1) % STATUS_PHRASES.length;
+          el.textContent = STATUS_PHRASES[i]!;
+        }, 2400);
+        return () => clearInterval(timer);
+      }
+      (window as any).__statusCycle = startStatusCycle;
+
       document.addEventListener('click', async (e) => {
         const target = e.target as HTMLElement;
 
@@ -103,7 +130,9 @@ const tickerText = tickerItems.map((c) => `${c.name} ▲ ${scores.get(c.slug) ??
           const original = genBtn.textContent ?? '✨ try it live';
 
           genBtn.disabled = true;
-          genBtn.textContent = 'generating…';
+          const stopCycle = (window as any).__statusCycle
+            ? (window as any).__statusCycle(genBtn)
+            : null;
           errEl?.classList.add('hidden');
           outEl?.classList.add('hidden');
 
@@ -143,6 +172,7 @@ const tickerText = tickerItems.map((c) => `${c.name} ▲ ${scores.get(c.slug) ??
               errEl.classList.remove('hidden');
             }
           } finally {
+            stopCycle?.();
             genBtn.disabled = false;
             genBtn.textContent = original;
           }
