@@ -6,10 +6,11 @@ interface Props {
   creator: Creator;
   score: number;
   userVote: number;
+  genCount: number;
   rank: number;
 }
 
-const { creator, score, userVote, rank } = Astro.props;
+const { creator, score, userVote, genCount, rank } = Astro.props;
 const hook = creator.voice.hooks[0] ?? '';
 const pic = avatarUrl(creator);
 const profile = profilePath(creator);
@@ -33,6 +34,7 @@ const profile = profilePath(creator);
 
   <div class="meta-chips">
     <span class="mchip cat">{creator.category}</span>
+    <span class="mchip gen" data-gen-chip={creator.slug} data-count={genCount} title={`posts generated in ${creator.name}'s voice`}>✍ {genCount.toLocaleString()} generated</span>
   </div>
 
   <div class="card-gen">

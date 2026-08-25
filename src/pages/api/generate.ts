@@ -5,6 +5,7 @@ import type { Creator } from '../../lib/creators';
 import { generateWithAgent } from '../../lib/flue-agent';
 import { buildGenerationPrompt } from '../../lib/prompt';
 import { sanitizeTweet } from '../../lib/sanitize';
+import { getDb, recordGeneration } from '../../lib/db';
 
 type Bindings = {
   AGENT?: Fetcher;
@@ -61,6 +62,12 @@ export const POST: APIRoute = async ({ request }) => {
       }),
     );
     if (!tweet) return json({ error: 'agent returned nothing — try again' }, 502);
+    try {
+      const db = getDb();
+      if (db) await recordGeneration(db, creator.slug);
+    } catch {
+      // counting must never break a successful generation
+    }
     return json({ tweet });
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'generation failed';

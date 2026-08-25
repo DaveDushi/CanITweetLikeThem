@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import CreatorCard from '../components/CreatorCard.astro';
 import { creators, categories, sortCreators } from '../lib/creators';
-import { getScores, getUserVotes, getDb } from '../lib/db';
+import { getScores, getUserVotes, getGenerationCounts, getDb } from '../lib/db';
 
 const url = new URL(Astro.url);
 const sort = ['top', 'new', 'az'].includes(url.searchParams.get('sort') ?? '')
@@ -12,11 +12,13 @@ const category = url.searchParams.get('category');
 const q = (url.searchParams.get('q') ?? '').trim().toLowerCase();
 
 let scores = new Map<string, number>();
+let genCounts = new Map<string, number>();
 const userVotes = new Map<string, number>();
 try {
   const db = getDb();
   if (db) {
     scores = await getScores(db);
+    genCounts = await getGenerationCounts(db);
     const voterId = Astro.cookies.get('ctlt_voter')?.value;
     if (voterId) {
       const uv = await getUserVotes(db, voterId);
@@ -105,6 +107,7 @@ function sortHref(s: string) {
         creator={creator}
         score={scores.get(creator.slug) ?? 0}
         userVote={userVotes.get(creator.slug) ?? 0}
+        genCount={genCounts.get(creator.slug) ?? 0}
         rank={i + 1}
       />
     ))}

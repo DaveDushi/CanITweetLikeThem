@@ -6,3 +6,10 @@ CREATE TABLE IF NOT EXISTS votes (
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   PRIMARY KEY (slug, voter)
 );
+
+-- posts generated through the API, one counter per creator
+CREATE TABLE IF NOT EXISTS generation_counts (
+  slug TEXT PRIMARY KEY,
+  count INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);

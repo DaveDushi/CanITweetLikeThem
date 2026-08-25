@@ -289,6 +289,7 @@ code, pre { font-family: var(--mono); }
   color: var(--muted);
 }
 .mchip.cat { border-color: rgba(77, 227, 255, 0.35); color: var(--cyan); }
+.mchip.gen { border-color: rgba(255, 92, 168, 0.4); color: var(--pink); }
 
 .card-foot {
   display: flex;
@@ -498,6 +499,43 @@ code, pre { font-family: var(--mono); }
   font-size: 12px;
   color: var(--lime);
 }
+.cmd-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+.cmd-row code {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 9px 12px;
+}
+.cmd-row .btn { flex-shrink: 0; }
+
+.install-cmd-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px 12px;
+  margin-bottom: 26px;
+}
+.install-cmd-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.install-cmd-box .cmd-row { margin: 9px 0 6px; }
+.install-cmd-box .cmd-row code { background: #0d0d13; }
+.install-cmd-hint {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0;
+}
+.install-cmd-hint a { color: var(--cyan); }
 
 /* ---------- live generator ---------- */
 

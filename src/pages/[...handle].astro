@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { getCreator, creators, avatarUrl, profilePath } from '../lib/creators';
-import { getScores, getUserVotes, getDb } from '../lib/db';
+import { getScores, getUserVotes, getGenerationCounts, getDb } from '../lib/db';
 import { buildSkillMd } from '../lib/skill';
 
 const raw = Astro.params.handle ?? '';
@@ -20,13 +20,18 @@ if (!creator) {
 }
 
 let scores = new Map<string, number>();
+let genCounts = new Map<string, number>();
 try {
   const db = getDb();
-  if (db) scores = await getScores(db);
+  if (db) {
+    scores = await getScores(db);
+    genCounts = await getGenerationCounts(db);
+  }
 } catch {
   // no D1 yet
 }
 const score = scores.get(creator.slug) ?? 0;
+const genCount = genCounts.get(creator.slug) ?? 0;
 const voterId = Astro.cookies.get('ctlt_voter')?.value;
 let userVote = 0;
 if (voterId) {
@@ -39,7 +44,7 @@ if (voterId) {
 }
 
 const skillMd = buildSkillMd(creator);
-const installCmd = `npx skills add ${Astro.url.origin}/api/skill/${creator.slug}`;
+const installCmd = `npx skills add https://canitweetlikethem.lol/api/skill/${creator.slug}`;
 const firstName = creator.name.split(' ')[0];
 const pic = avatarUrl(creator);
 const rank = [...scores.entries()].sort((a, b) => b[1] - a[1]).findIndex(([s]) => s === creator.slug) + 1;
@@ -60,6 +65,7 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
         <p class="detail-bio">{creator.bio}</p>
         <div class="detail-meta">
           <span class="mchip cat">{creator.category}</span>
+          <span class="mchip gen" id="gen-chip" data-count={genCount}>✍ {genCount.toLocaleString()} posts generated in this voice</span>
           {creator.platforms.map((p) => <span class="mchip">{p}</span>)}
           {Object.entries(creator.links).map(([label, href]) => (
             <a class="mchip" href={href} target="_blank" rel="noopener">{label} ↗</a>
@@ -75,6 +81,15 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
         <a href={`/api/skill/${creator.slug}`} class="btn btn-primary">⬇ download skill</a>
       </div>
     </section>
+
+    <div class="install-cmd-box">
+      <span class="install-cmd-label">✦ install the skill</span>
+      <div class="cmd-row">
+        <code id="install-cmd">{installCmd}</code>
+        <button class="btn btn-sm btn-primary" data-copy="#install-cmd">copy</button>
+      </div>
+      <p class="install-cmd-hint">via the <a href="https://skills.sh" target="_blank" rel="noopener">skills CLI</a> — drops it into every agent it detects (Claude Code, opencode, Codex, Cursor and ~70 more)</p>
+    </div>
 
     <h2 class="section-title">try it live</h2>
     <div class="gen-box">
@@ -160,9 +175,9 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
     </div>
 
     <div class="install-note">
-      <strong>How to install:</strong> save as <code>{creator.slug}-posts/SKILL.md</code> inside your agent's skills folder
+      <strong>No npx?</strong> Save as <code>{creator.slug}-posts/SKILL.md</code> inside your agent's skills folder
       (e.g. <code>~/.claude/skills/</code> or <code>.opencode/skill/</code>), or just paste it as a system prompt.
-      Then ask for "a post like {creator.name.split(' ')[0]} about [topic]".
+      Then ask for "a post like {firstName} about [topic]".
     </div>
 
     <h2 class="section-title">clone someone else</h2>
@@ -205,6 +220,12 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
         if (!res.ok || !data.tweet) throw new Error(data.error || 'generation failed (' + res.status + ')');
 
         textEl.textContent = data.tweet;
+        const chip = document.getElementById('gen-chip');
+        if (chip) {
+          const n = parseInt(chip.dataset.count ?? '0', 10) + 1;
+          chip.dataset.count = String(n);
+          chip.textContent = `✍ ${n.toLocaleString()} posts generated in this voice`;
+        }
         updateCount(data.tweet);
         out.classList.remove('hidden');
       } catch (err) {

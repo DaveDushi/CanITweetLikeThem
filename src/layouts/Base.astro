@@ -164,6 +164,12 @@ const tickerText = tickerItems.map((c) => `${c.name} ▲ ${scores.get(c.slug) ??
             }
 
             if (textEl) textEl.textContent = data.tweet;
+            const chip = document.querySelector<HTMLElement>(`[data-gen-chip="${slug}"]`);
+            if (chip) {
+              const n = parseInt(chip.dataset.count ?? '0', 10) + 1;
+              chip.dataset.count = String(n);
+              chip.textContent = `✍ ${n.toLocaleString()} generated`;
+            }
             const credit = handle ? `\n\nWritten by canitweetlikethem.lol/${handle}` : '';
             const share = data.tweet + credit;
             const n = share.length;

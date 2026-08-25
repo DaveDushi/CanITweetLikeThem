@@ -11,3 +11,5 @@ data/*.db-shm
 agent-dev.log
 wrangler.jsonc
 .wrangler/
+.wrangler/state/v3/
+.wrangler/state/v3/observability/miniflare-wobs-trace-store/

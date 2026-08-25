@@ -10,10 +10,12 @@ Inspired by [canivibecodeit.com](https://canivibecodeit.com).
 ## How to grab a skill
 
 1. Open any creator page.
-2. Download its `SKILL.md`.
-3. Hand it to whichever agent reads skills (opencode, Claude Code, anything that
-   takes markdown instructions) and prompt away: "write a Florin Pop style post
-   about rest."
+2. Grab the skill either way:
+   - **One command:** copy the `npx skills add ...` line on the page. It installs through the
+     [skills.sh](https://skills.sh) CLI, which drops the skill into every agent it detects
+     (Claude Code, opencode, Codex, Cursor and ~70 more).
+   - **Manual:** download its `SKILL.md` and save it inside your agent's skills folder.
+3. Prompt away: "write a Florin Pop style post about rest."
 
 No sign-up, no X API keys, $0 forever. Creator pages also have a **try it live**
 box where the site's own agent writes a fresh post in that voice, so you can judge

@@ -92,6 +92,27 @@ async function currentUserVote(
   return row ? Number(row.dir) : 0;
 }
 
+export async function getGenerationCounts(db: D1Like): Promise<Map<string, number>> {
+  const { results } = await db
+    .prepare('SELECT slug, count FROM generation_counts')
+    .all<{ slug: string; count: number }>();
+  const counts = new Map<string, number>();
+  for (const row of results ?? []) {
+    counts.set(row.slug, Number(row.count));
+  }
+  return counts;
+}
+
+export async function recordGeneration(db: D1Like, slug: string): Promise<void> {
+  await db
+    .prepare(
+      `INSERT INTO generation_counts (slug, count) VALUES (?, 1)
+       ON CONFLICT (slug) DO UPDATE SET count = count + 1, updated_at = datetime('now')`,
+    )
+    .bind(slug)
+    .run();
+}
+
 export function ensureVoterId(cookieValue: string | undefined): string {
   return cookieValue ?? globalThis.crypto.randomUUID();
 }
