@@ -78,11 +78,15 @@ code, pre { font-family: var(--mono); }
   margin: 0 auto;
 }
 .logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font-family: var(--mono);
   font-weight: 800;
   font-size: 18px;
   letter-spacing: -0.02em;
 }
+.logo-mark { width: 22px; height: 22px; flex-shrink: 0; border-radius: 5px; }
 .logo em { color: var(--lime); font-style: normal; }
 .nav-links {
   display: flex;
