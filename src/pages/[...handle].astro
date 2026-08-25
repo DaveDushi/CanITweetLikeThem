@@ -1,18 +1,21 @@
 ---
 import Base from '../layouts/Base.astro';
-import { getCreator, creators, avatarUrl } from '../lib/creators';
+import { getCreator, creators, avatarUrl, profilePath } from '../lib/creators';
 import { getScores, getUserVotes, getDb } from '../lib/db';
 import { buildSkillMd } from '../lib/skill';
 
 const raw = Astro.params.handle ?? '';
 if (!raw.startsWith('@')) {
   const legacy = getCreator(raw);
-  if (legacy) return Astro.redirect(`/@${legacy.slug}`);
+  if (legacy) return Astro.redirect(profilePath(legacy));
   return Astro.rewrite('/404');
 }
-const creator = getCreator(raw.slice(1));
+const screenName = raw.slice(1).toLowerCase();
+const creator = creators.find((c) => c.handle.replace(/^@/, '').toLowerCase() === screenName);
 
 if (!creator) {
+  const legacy = getCreator(screenName);
+  if (legacy) return Astro.redirect(profilePath(legacy));
   return Astro.rewrite('/404');
 }
 
@@ -162,7 +165,7 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
 
     <h2 class="section-title">clone someone else</h2>
     <div class="chips" style="padding-bottom:70px;">
-      {others.map((c) => <a href={`/@${c.slug}`} class="chip">{c.emoji} {c.name}</a>)}
+      {others.map((c) => <a href={profilePath(c)} class="chip">{c.emoji} {c.name}</a>)}
       <a href="/" class="chip on">see all →</a>
     </div>
   </div>

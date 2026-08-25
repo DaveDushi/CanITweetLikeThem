@@ -58,6 +58,11 @@ export function xHandle(creator: Creator): string | null {
   return stripped || null;
 }
 
+/** Canonical profile URL, always based on the X handle (/@levelsio). */
+export function profilePath(creator: Creator): string {
+  return `/@${xHandle(creator) ?? creator.slug}`;
+}
+
 /** Live X profile pic — follows the creator if they change it. */
 export function avatarUrl(creator: Creator): string | null {
   const handle = xHandle(creator);

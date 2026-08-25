@@ -1,6 +1,6 @@
 ---
 import type { Creator } from '../lib/creators';
-import { avatarUrl } from '../lib/creators';
+import { avatarUrl, profilePath } from '../lib/creators';
 
 interface Props {
   creator: Creator;
@@ -12,17 +12,18 @@ interface Props {
 const { creator, score, userVote, rank } = Astro.props;
 const hook = creator.voice.hooks[0] ?? '';
 const pic = avatarUrl(creator);
+const profile = profilePath(creator);
 ---
 
 <article class="card" data-name={`${creator.name} ${creator.handle} ${creator.tagline}`.toLowerCase()}>
   <span class="rank">{String(rank).padStart(2, '0')}</span>
   <div class="card-top">
-    <a href={`/@${creator.slug}`} class="avatar" aria-hidden="true">
+    <a href={profile} class="avatar" aria-hidden="true">
       <span class="avatar-emoji">{creator.emoji}</span>
       {pic && <img src={pic} alt="" loading="lazy" onerror="this.remove()" />}
     </a>
     <div class="card-id">
-      <a href={`/@${creator.slug}`} class="card-name">{creator.name}</a>
+      <a href={profile} class="card-name">{creator.name}</a>
       <div class="card-handle">{creator.handle} · {creator.platforms.join(', ')}</div>
     </div>
   </div>
@@ -53,6 +54,6 @@ const pic = avatarUrl(creator);
       <span class="score">{score.toLocaleString()}</span>
       <button class={`down${userVote === -1 ? ' on' : ''}`} data-dir="down" aria-label={`downvote ${creator.name}`}>▼</button>
     </div>
-    <a href={`/@${creator.slug}`} class="btn btn-sm">get skill →</a>
+    <a href={profile} class="btn btn-sm">get skill →</a>
   </div>
 </article>
