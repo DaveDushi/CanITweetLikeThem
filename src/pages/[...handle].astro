@@ -4,8 +4,13 @@ import { getCreator, creators, avatarUrl } from '../lib/creators';
 import { getScores, getUserVotes, getDb } from '../lib/db';
 import { buildSkillMd } from '../lib/skill';
 
-const { slug } = Astro.params;
-const creator = getCreator(slug ?? '');
+const raw = Astro.params.handle ?? '';
+if (!raw.startsWith('@')) {
+  const legacy = getCreator(raw);
+  if (legacy) return Astro.redirect(`/@${legacy.slug}`);
+  return Astro.rewrite('/404');
+}
+const creator = getCreator(raw.slice(1));
 
 if (!creator) {
   return Astro.rewrite('/404');
@@ -154,7 +159,7 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
 
     <h2 class="section-title">clone someone else</h2>
     <div class="chips" style="padding-bottom:70px;">
-      {others.map((c) => <a href={`/${c.slug}`} class="chip">{c.emoji} {c.name}</a>)}
+      {others.map((c) => <a href={`/@${c.slug}`} class="chip">{c.emoji} {c.name}</a>)}
       <a href="/" class="chip on">see all →</a>
     </div>
   </div>
@@ -202,7 +207,7 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
     });
 
     function updateCount(t) {
-      const share = t + '\n\ngenerated via canitweetlikethem.lol ' + handle;
+      const share = t + '\n\nWritten by canitweetlikethem.lol/' + handle;
       const n = share.length;
       countEl.textContent = n + ' / 280';
       countEl.classList.toggle('over', n > 280);

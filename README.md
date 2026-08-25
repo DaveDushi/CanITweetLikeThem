@@ -1,77 +1,99 @@
-# canitweetlikethem
+# Can I tweet like them?
 
-**Can I tweet like them?** A ranked gallery of downloadable AI skills that make your
-agent write X posts exactly like a given creator — Hormozi, Marc Lou, Naval, levelsio,
-Florin Pop and friends. Vote clones up or down; the best voices rise.
+A ranked gallery of AI skills that ghostwrite X posts in a specific creator's voice.
+Hormozi, Naval, Marc Lou, levelsio, Florin Pop and friends. Download a skill, feed it
+to your agent, and see if the output fools anyone. Vote the good clones up. The bad
+ones sink.
 
 Inspired by [canivibecodeit.com](https://canivibecodeit.com).
 
-## How it runs
+## How to grab a skill
 
-Two Cloudflare Workers:
+1. Open any creator page.
+2. Download its `SKILL.md`.
+3. Hand it to whichever agent reads skills (opencode, Claude Code, anything that
+   takes markdown instructions) and prompt away: "write a Florin Pop style post
+   about rest."
 
-1. **The site** (this directory). Astro server output, D1 for votes, rendered pages.
-2. **The agent** (`agent/`). A [Flue](https://flueframework.com/) agent worker that
-   ghostwrites tweets with Cloudflare Workers AI (model `@cf/google/gemma-4-26b-a4b-it`,
-   no API key needed). One Durable Object class per conversation.
+No sign-up, no X API keys, $0 forever. Creator pages also have a **try it live**
+box where the site's own agent writes a fresh post in that voice, so you can judge
+the clone before committing. The **Post on X** button opens X's compose window
+prefilled. It posts as whoever clicks.
 
-The site calls the agent through a service binding named `AGENT`, so nothing crosses
-the public internet and no localhost URL needs to work from inside workerd. Both sides
-share a bearer token (`AGENT_TOKEN`) as a second lock in front of the agent's routes.
+## How to add a creator (ship your own skill)
 
-## Run it locally
+This is the fun part, and there is no code involved. A skill starts life as one
+JSON file. If you can fill out a template, you can ship one.
 
-```bash
-npm install
-cd agent && npm install && cd ..
-npm run db:init:local    # create the votes table in local D1
-npm run agent:dev        # terminal 1: Flue agent on :5173
-npm run dev              # terminal 2: site on http://localhost:4321
+1. Fork the repo and create `data/creators/<slug>.json`. The slug becomes the URL,
+   so `florin-pop.json` lives at `/florin-pop`.
+2. Do the homework. Read the creator's last ~50 posts before writing a word of the
+   voice DNA. The clone is only as good as the file.
+3. Fill out the schema below.
+4. Optionally drop a profile pic at `src/assets/avatars/<slug>.jpg`. Without one
+   they get an emoji avatar, which is honestly fine too.
+5. Open a PR. Merged files go live instantly and start collecting votes at zero.
+
+The best reference file right now is [`data/creators/florin-pop.json`](data/creators/florin-pop.json).
+Copy its shape.
+
+### The schema
+
+```jsonc
+{
+  "slug": "florin-pop",
+  "name": "Florin Pop",
+  "handle": "@FlorinPop17",
+  "emoji": "🫶",
+  "tagline": "Casual indie hacker living the soft life",
+  "category": "indie-hacking",
+  "platforms": ["X"],
+  "bio": "One paragraph of who they are and what they post about",
+  "added": "2026-08-24",
+  "voice": {
+    "traits": ["Extremely casual...", "..."],
+    "sentence_style": "Short sentences, natural line breaks...",
+    "emoji_usage": "Heavy but natural. Favorites: 🤭 ☠️ 💪 🫶",
+    "vocabulary": ["padel", "freedom > money", "..."],
+    "hooks": ["What would you do if...🤔", "..."],
+    "patterns": [
+      {
+        "name": "Daily activity log",
+        "template": "1h gym\n3h padel (2 games)\n20,000 steps later… 🤭",
+        "note": "His most frequent format right now"
+      }
+    ],
+    "quirks": ["Ends posts with a single emoji"],
+    "never": ["Corporate speak", "Hashtags"],
+    "formatting_rules": ["Line breaks over paragraphs", "Under 280 chars"]
+  },
+  "quality_check": ["Would this sound natural from him?"],
+  "triggers": ["Write a Florin Pop style post about rest"],
+  "examples": [{ "platform": "X", "text": "The biggest flex isn't money. It's free time." }],
+  "links": { "X": "https://x.com/FlorinPop17" }
+}
 ```
 
-`agent/.env` and the site's `.dev.vars` both set `AGENT_TOKEN=dev-token` for local dev.
-If generation answers 403, check the two values still match.
+### What separates a great file from a forgettable one
 
-## Deploy
+Some hard-won notes from the files that already exist:
 
-```bash
-wrangler d1 create canitweetlikethem   # paste the real id into wrangler.jsonc
-npm run db:init:remote
-npm run deploy                         # site
-npm run agent:deploy                   # agent (deploy first or after, order doesn't matter)
-```
+- `voice.never` is the highest-leverage field. If he would never use hashtags and
+  your file doesn't say so, half the outputs get ruined by hashtags. Be thorough
+  here and the clone gets scary good.
+- `voice.patterns[].template` should be a literal skeleton with `[placeholders]`,
+  not a description. Copy-paste friendly is the goal.
+- `quality_check` is a pre-flight list the agent runs before answering. These few
+  questions make or break output quality.
+- `hooks` work best as fill-in-the-blank openers lifted straight from real posts.
+- One file per creator, parody intent only. Every page credits their real handle.
 
-Both `wrangler.jsonc` files pin an `account_id`. The D1 id placeholder
-(`local-canitweetlikethem`) works for local dev only; deploys need the real one.
-
-Requires Node >= 22.5.
-
-## Live generation
-
-Creator pages have a "try it live" section. Enter a topic or leave it empty and the
-agent picks its own, then writes one post in that creator's voice. The draft gets copy
-and **Post on X** buttons; posting opens X's compose window prefilled via web intent.
-No X API keys. It posts as whoever clicks.
-
-## Stack
-
-- [Astro](https://astro.build) server output + Cloudflare Workers adapter — fully rendered HTML
-- [Flue](https://flueframework.com/) agent framework, deployed as its own Worker with one Durable Object per conversation
-- Cloudflare Workers AI for generation, reached through the agent
-- Cloudflare D1 (SQLite) for vote counters, one anonymous vote per browser via cookie
-- Vanilla JS for voting/copy/generate interactions
-- Creators are JSON files in `data/creators/` — one file per creator, contributed by PR
-- Profile pics live in `src/assets/avatars/<slug>.jpg`, emoji fallback when missing
-
-## Add a creator
-
-Add `data/creators/<slug>.json` following the schema documented at `/submit`.
-Study the creator's last ~50 posts before writing the voice DNA — the quality of the
-clone is the quality of the data file. Skills are generated from these files as
-agent-friendly `SKILL.md` documents with frontmatter, trigger rules, pattern skeletons,
-and a pre-flight quality check.
+Full field-by-field documentation also lives at `/submit` on the running site.
+Each creator JSON gets compiled into the downloadable `SKILL.md` with frontmatter,
+trigger rules, pattern skeletons, and the pre-flight quality check.
 
 ## Votes
 
-Stored in D1. One vote per browser per creator, cookie-guarded, toggleable up/down.
-No seed votes — every score on the site is a real vote.
+Stored in D1. One vote per browser per creator, cookie-guarded, toggleable
+up or down. No seed votes, no warm-up numbers. Every score on the site is a real
+click from a real person, and yours could be next.

@@ -1,28 +1,30 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "canitweetlikethem",
-  "account_id": "972f8c0c21865ac5fa34b14cfb73479e",
-  "main": "@astrojs/cloudflare/entrypoints/server",
-  "compatibility_date": "2026-08-01",
-  "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "directory": "./dist",
-    "binding": "ASSETS"
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "canitweetlikethem",
-      "database_id": "local-canitweetlikethem"
-    }
-  ],
-  "services": [
-    {
-      "binding": "AGENT",
-      "service": "canitweetlikethem-agent"
-    }
-  ],
-  "observability": {
-    "enabled": true
-  }
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "canitweetlikethem",
+	"account_id": "972f8c0c21865ac5fa34b14cfb73479e",
+	"main": "@astrojs/cloudflare/entrypoints/server",
+	"compatibility_date": "2026-08-01",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": "./dist",
+		"binding": "ASSETS"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "canitweetlikethem",
+			"database_id": "c86bb036-65e3-455c-8ff2-001d91784921"
+		}
+	],
+	"services": [
+		{
+			"binding": "AGENT",
+			"service": "canitweetlikethem-agent"
+		}
+	],
+	"observability": {
+		"enabled": true
+	}
 }
