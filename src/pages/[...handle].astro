@@ -239,7 +239,7 @@ const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
     });
 
     function updateCount(t) {
-      const share = t + '\n\nWritten by canitweetlikethem.lol/' + handle;
+      const share = t  + '\n\n'+ handle + ' Written by: canitweetlikethem.lol/' + handle;
       const n = share.length;
       countEl.textContent = n + ' / 280';
       countEl.classList.toggle('over', n > 280);

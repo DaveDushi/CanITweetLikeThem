@@ -170,7 +170,7 @@ const tickerText = tickerItems.map((c) => `${c.name} ▲ ${scores.get(c.slug) ??
               chip.dataset.count = String(n);
               chip.textContent = `✍ ${n.toLocaleString()} generated`;
             }
-            const credit = handle ? `\n\nWritten by canitweetlikethem.lol/${handle}` : '';
+            const credit = handle ? `\n\n${handle} Written by: canitweetlikethem.lol/${handle}` : '';
             const share = data.tweet + credit;
             const n = share.length;
             if (countEl) {
