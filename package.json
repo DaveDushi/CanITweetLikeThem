@@ -1,0 +1,36 @@
+{
+  "name": "canitweetlikethem",
+  "version": "0.1.0",
+  "description": "Can I tweet like them? AI skills that clone your favorite creators' voices.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "agent:dev": "npm run dev --prefix agent",
+    "build": "astro build",
+    "preview": "npm run build && npm run build --prefix agent && set CLOUDFLARE_ACCOUNT_ID=972f8c0c21865ac5fa34b14cfb73479e&& wrangler dev -c dist/server/wrangler.json -c agent/dist/canitweetlikethem_agent/wrangler.json",
+    "deploy": "npm run build && wrangler deploy -c dist/server/wrangler.json",
+    "agent:deploy": "npm run build --prefix agent && npm run deploy --prefix agent",
+    "db:init:local": "wrangler d1 execute canitweetlikethem --file=./d1/schema.sql --local",
+    "db:init:remote": "wrangler d1 execute canitweetlikethem --file=./d1/schema.sql --remote",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.2.4",
+    "astro": "^7.2.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.6.0",
+    "wrangler": "^4.125.0"
+  },
+  "allowScripts": {
+    "sharp@0.34.5": true,
+    "esbuild@0.28.2": true,
+    "esbuild@0.28.1": true,
+    "workerd@1.20260820.1": true
+  }
+}

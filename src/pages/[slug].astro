@@ -1,0 +1,213 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCreator, creators, avatarUrl } from '../lib/creators';
+import { getScores, getUserVotes, getDb } from '../lib/db';
+import { buildSkillMd } from '../lib/skill';
+
+const { slug } = Astro.params;
+const creator = getCreator(slug ?? '');
+
+if (!creator) {
+  return Astro.rewrite('/404');
+}
+
+let scores = new Map<string, number>();
+try {
+  const db = getDb();
+  if (db) scores = await getScores(db);
+} catch {
+  // no D1 yet
+}
+const score = scores.get(creator.slug) ?? 0;
+const voterId = Astro.cookies.get('ctlt_voter')?.value;
+let userVote = 0;
+if (voterId) {
+  try {
+    const db = getDb();
+    if (db) userVote = (await getUserVotes(db, voterId)).get(creator.slug) ?? 0;
+  } catch {
+    // no D1 yet
+  }
+}
+
+const skillMd = buildSkillMd(creator);
+const pic = avatarUrl(creator.slug);
+const rank = [...scores.entries()].sort((a, b) => b[1] - a[1]).findIndex(([s]) => s === creator.slug) + 1;
+
+const others = creators.filter((c) => c.slug !== creator.slug).slice(0, 4);
+---
+
+<Base title={`${creator.name} · Can I Tweet Like Them?`} description={`Can AI tweet like ${creator.name}? Download the skill and find out — your agent writes posts exactly like ${creator.handle}.`}>
+  <div class="wrap">
+    <section class="detail-hero">
+      <div class="avatar detail-avatar">{pic ? <img src={pic} alt={creator.name} /> : creator.emoji}</div>
+      <div style="min-width:0;flex:1;">
+        <p class="hero-kicker" style="margin-bottom:8px;">#{rank} · {score.toLocaleString()} votes</p>
+        <h1>{creator.name}</h1>
+        <p class="detail-bio">{creator.bio}</p>
+        <div class="detail-meta">
+          <span class="mchip cat">{creator.category}</span>
+          {creator.platforms.map((p) => <span class="mchip">{p}</span>)}
+          {Object.entries(creator.links).map(([label, href]) => (
+            <a class="mchip" href={href} target="_blank" rel="noopener">{label} ↗</a>
+          ))}
+        </div>
+      </div>
+      <div class="detail-actions">
+        <div class="vote vote-lg" data-vote data-slug={creator.slug}>
+          <button class={`up${userVote === 1 ? ' on' : ''}`} data-dir="up" aria-label={`upvote ${creator.name}`}>▲</button>
+          <span class="score">{score.toLocaleString()}</span>
+          <button class={`down${userVote === -1 ? ' on' : ''}`} data-dir="down" aria-label={`downvote ${creator.name}`}>▼</button>
+        </div>
+        <a href={`/api/skill/${creator.slug}`} class="btn btn-primary">⬇ download skill</a>
+      </div>
+    </section>
+
+    <h2 class="section-title">try it live</h2>
+    <div class="gen-box">
+      <div class="gen-row">
+        <input
+          id="gen-topic"
+          class="search-input"
+          placeholder={`topic — leave empty and ${creator.name.split(' ')[0]} picks their own`}
+          maxlength={200}
+        />
+        <button id="gen-btn" class="btn btn-primary">✨ generate tweet</button>
+      </div>
+      <p id="gen-err" class="gen-error hidden"></p>
+      <div id="gen-out" class="hidden">
+        <div class="tweet-card">
+          <div class="tweet-platform">✦ generated draft</div>
+          <p id="gen-text" class="tweet-text"></p>
+        </div>
+        <div class="gen-actions">
+          <span id="gen-count" class="charcount"></span>
+          <button class="btn btn-sm" data-copy="#gen-text">copy</button>
+          <a id="gen-post" class="btn btn-sm btn-primary" target="_blank" rel="noopener">𝕏 post on X ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">voice dna</h2>
+    <div class="dna-grid">
+      <div class="dna-box">
+        <h3>core traits</h3>
+        <ul>{creator.voice.traits.map((t) => <li>{t}</li>)}</ul>
+      </div>
+      <div class="dna-box">
+        <h3>sentence style</h3>
+        <p>{creator.voice.sentence_style}</p>
+        {creator.voice.emoji_usage && <p style="margin-top:10px;"><strong style="color:var(--cyan);">Emoji:</strong> {creator.voice.emoji_usage}</p>}
+      </div>
+      <div class="dna-box">
+        <h3>vocabulary</h3>
+        <ul>{creator.voice.vocabulary.map((t) => <li>{t}</li>)}</ul>
+      </div>
+      <div class="dna-box">
+        <h3>signature quirks</h3>
+        <ul>{creator.voice.quirks.map((t) => <li>{t}</li>)}</ul>
+      </div>
+      <div class="dna-box">
+        <h3>hooks that work</h3>
+        <ul>{creator.voice.hooks.map((t) => <li>{t}</li>)}</ul>
+      </div>
+      <div class="dna-box">
+        <h3>never do this</h3>
+        <ul>{creator.voice.never.map((t) => <li>{t}</li>)}</ul>
+      </div>
+    </div>
+
+    <h2 class="section-title">signature patterns</h2>
+    {creator.voice.patterns.map((p, i) => (
+      <div class="pattern-block">
+        <div class="pattern-head"><span>{String(i + 1).padStart(2, '0')}</span>{p.name}</div>
+        {p.note && <p class="pattern-note">{p.note}</p>}
+        <pre>{p.template}</pre>
+      </div>
+    ))}
+
+    <h2 class="section-title">example posts</h2>
+    {creator.examples.map((e) => (
+      <div class="tweet-card">
+        <div class="tweet-platform">✦ {e.platform}</div>
+        <p class="tweet-text">{e.text}</p>
+      </div>
+    ))}
+
+    <h2 class="section-title">the skill</h2>
+    <div class="skill-viewer">
+      <div class="skill-toolbar">
+        <span class="skill-filename">{creator.slug}-posts/SKILL.md</span>
+        <div class="skill-actions">
+          <button class="btn btn-sm" data-copy="#skill-code">copy</button>
+          <a href={`/api/skill/${creator.slug}`} class="btn btn-sm btn-primary">download .md</a>
+        </div>
+      </div>
+      <pre><code id="skill-code">{skillMd}</code></pre>
+    </div>
+
+    <div class="install-note">
+      <strong>How to install:</strong> save as <code>{creator.slug}-posts/SKILL.md</code> inside your agent's skills folder
+      (e.g. <code>~/.claude/skills/</code> or <code>.opencode/skill/</code>), or just paste it as a system prompt.
+      Then ask for "a post like {creator.name.split(' ')[0]} about [topic]".
+    </div>
+
+    <h2 class="section-title">clone someone else</h2>
+    <div class="chips" style="padding-bottom:70px;">
+      {others.map((c) => <a href={`/${c.slug}`} class="chip">{c.emoji} {c.name}</a>)}
+      <a href="/" class="chip on">see all →</a>
+    </div>
+  </div>
+
+  <script define:vars={{ slug: creator.slug, handle: creator.handle }}>
+    const btn = document.getElementById('gen-btn');
+    const input = document.getElementById('gen-topic');
+    const out = document.getElementById('gen-out');
+    const errEl = document.getElementById('gen-err');
+    const textEl = document.getElementById('gen-text');
+    const countEl = document.getElementById('gen-count');
+    const postBtn = document.getElementById('gen-post');
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      btn.textContent = 'generating…';
+      errEl.classList.add('hidden');
+      out.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ slug: slug, topic: input.value }),
+        });
+        const raw = await res.text();
+        let data = {};
+        try {
+          data = JSON.parse(raw);
+        } catch {
+          // non-JSON (e.g. HTML error page) — fall through to the generic message
+        }
+        if (!res.ok || !data.tweet) throw new Error(data.error || 'generation failed (' + res.status + ')');
+
+        textEl.textContent = data.tweet;
+        updateCount(data.tweet);
+        out.classList.remove('hidden');
+      } catch (err) {
+        errEl.textContent = '⚠ ' + (err.message || 'something went wrong');
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '✨ generate tweet';
+      }
+    });
+
+    function updateCount(t) {
+      const share = t + '\n\ngenerated via canitweetlikethem.lol ' + handle;
+      const n = share.length;
+      countEl.textContent = n + ' / 280';
+      countEl.classList.toggle('over', n > 280);
+      postBtn.href =
+        'https://x.com/intent/post?text=' + encodeURIComponent(share);
+    }
+  </script>
+</Base>

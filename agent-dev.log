@@ -1,0 +1,71 @@
+
+> dev
+> vite dev
+
+⎔ Establishing remote connection...
+Using secrets defined in .env
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mAI bindings always access remote resources, and so may incur usage charges even in local dev. To suppress this warning, set `remote: true` for the binding definition in your configuration file.[0m
+
+
+[2m10:10:28 AM[22m [33m[1m[vite][22m[39m [33m[2m(canitweetlikethem_agent)[22m[39m [33mwarning: 
+[36mC:/dev/opencode/canitweetlikethem/agent/dist/canitweetlikethem_agent/index.js[33m
+[0m66910 |  */
+66911 |  var importNodeOnlyApi = (specifier) => {
+66912 |  ...rt(__rewriteRelativeImportExtension$2(import.meta.url.endsWith(".js") ? specifier.replace(/\.ts$/, ".js") : specifier
+      |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+66913 |  };
+66914 |  var bedrockConverseStreamApi = () => lazyApi(async () => await importNodeOnlyApi("./bedrock-converse-stream.ts"));[0m[33m
+The above dynamic import cannot be analyzed by Vite.
+See [34mhttps://vite.dev/guide/features#dynamic-import[33m for supported dynamic import formats. If this is intended to be left as-is, you can use the /* @vite-ignore */ comment inside the import() call to suppress this warning.
+[33m[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/dev/opencode/canitweetlikethem/agent/dist/canitweetlikethem_agent/index.js[39m
+[2m10:10:28 AM[22m [33m[1m[vite][22m[39m [33m[2m(canitweetlikethem_agent)[22m[39m [33mwarning: 
+[36mC:/dev/opencode/canitweetlikethem/agent/dist/canitweetlikethem_agent/index.js[33m
+[0m67035 |  */
+67036 |  var importOAuthModule = (specifier) => {
+67037 |  ...rt(__rewriteRelativeImportExtension$1(import.meta.url.endsWith(".js") ? specifier.replace(/\.ts$/, ".js") : specifier
+      |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+67038 |  };
+67039 |  var loadAnthropicOAuth = async () => {[0m[33m
+The above dynamic import cannot be analyzed by Vite.
+See [34mhttps://vite.dev/guide/features#dynamic-import[33m for supported dynamic import formats. If this is intended to be left as-is, you can use the /* @vite-ignore */ comment inside the import() call to suppress this warning.
+[33m[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/dev/opencode/canitweetlikethem/agent/dist/canitweetlikethem_agent/index.js[39m
+[2m10:10:28 AM[22m [33m[1m[vite][22m[39m [33m[2m(canitweetlikethem_agent)[22m[39m [33mwarning: 
+[36mC:/dev/opencode/canitweetlikethem/agent/dist/canitweetlikethem_agent/index.js[33m
+[0m67064 |  	return path;
+67065 |  };
+67066 |  var dynamicImport = (specifier) => import(__rewriteRelativeImportExtension(specifier));
+      |                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+67067 |  var NODE_FS_SPECIFIER = "node:fs";
+67068 |  var NODE_OS_SPECIFIER = "node:os";[0m[33m
+The above dynamic import cannot be analyzed by Vite.
+See [34mhttps://vite.dev/guide/features#dynamic-import[33m for supported dynamic import formats. If this is intended to be left as-is, you can use the /* @vite-ignore */ comment inside the import() call to suppress this warning.
+[33m[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/dev/opencode/canitweetlikethem/agent/dist/canitweetlikethem_agent/index.js[39m
+[2m10:10:29 AM[22m [33m[1m[vite][22m[39m [33m[2m(canitweetlikethem_agent)[22m[39m [33mwarning: 
+[36mC:/dev/opencode/canitweetlikethem/agent/dist/canitweetlikethem_agent/assets/models-BSxCxF_r-CIPrv_3I-S3tUr508-BVVgWiUH-B9mma382.js[33m
+[0m69 |  	return path;
+70 |  };
+71 |  var importNodeModule = (specifier) => import(__rewriteRelativeImportExtension(specifier));
+   |                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+72 |  function getProcessEnv() {
+73 |  	return globalThis.process?.env;[0m[33m
+The above dynamic import cannot be analyzed by Vite.
+See [34mhttps://vite.dev/guide/features#dynamic-import[33m for supported dynamic import formats. If this is intended to be left as-is, you can use the /* @vite-ignore */ comment inside the import() call to suppress this warning.
+[33m[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/dev/opencode/canitweetlikethem/agent/dist/canitweetlikethem_agent/assets/models-BSxCxF_r-CIPrv_3I-S3tUr508-BVVgWiUH-B9mma382.js[39m
+
+  [32m[1mVITE[22m v8.2.2[39m  [2mready in [0m[1m12188[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+  [32m➜[39m  [1mDebug[22m:   [2m[33mhttp://localhost:[1m5173[22m[2m/__debug[39m[22m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mb + enter[22m[2m to list configured Cloudflare bindings[22m
+[2m[32m  ➜[39m[22m[2m  press [22m[1me + enter[22m[2m to open local explorer[22m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mt + enter[22m[2m to start tunnel[22m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m

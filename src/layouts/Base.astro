@@ -1,0 +1,180 @@
+---
+import '../styles/global.css';
+import { creators } from '../lib/creators';
+import { getScores, getDb } from '../lib/db';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = 'Can I Tweet Like Them? · AI skills that clone creator voices', description = 'One question per creator: can AI tweet like them? Grab the skill, feed it to your agent, and find out. Vote for the voices worth keeping.' } = Astro.props;
+
+const db = getDb();
+let scores = new Map<string, number>();
+try {
+  scores = db ? await getScores(db) : scores;
+} catch {
+  // votes unavailable (e.g. local dev without D1 init) — render zeros
+}
+const tickerItems = [...creators]
+  .sort((a, b) => (scores.get(b.slug) ?? 0) - (scores.get(a.slug) ?? 0))
+  .slice(0, 10);
+const tickerText = tickerItems.map((c) => `${c.name} ▲ ${scores.get(c.slug) ?? 0}`).join(' · ');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>{tickerText}</span>
+        <span>{tickerText}</span>
+      </div>
+    </div>
+
+    <header class="site-head">
+      <div class="site-head-inner">
+        <a href="/" class="logo">can<em>i</em>tweetlike<em>them</em></a>
+        <nav class="nav-links">
+          <a href="/">browse</a>
+          <a href="/submit">submit a creator</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="wrap site-foot">
+      <span>© {new Date().getFullYear()} canitweetlikethem — prompts are free forever.</span>
+      <span>vibes borrowed from <a href="https://canivibecodeit.com" target="_blank" rel="noopener">canivibecodeit</a></span>
+      <a href="/submit">add your favorite creator →</a>
+    </footer>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      const toast = document.getElementById('toast');
+      let toastTimer: ReturnType<typeof setTimeout>;
+
+      function showToast(msg: string) {
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+      }
+
+      document.addEventListener('click', async (e) => {
+        const target = e.target as HTMLElement;
+
+        const copyBtn = target.closest<HTMLElement>('[data-copy]');
+        if (copyBtn) {
+          const sel = copyBtn.dataset.copy ?? '';
+          const el = document.querySelector(sel);
+          const text = (el as HTMLElement | null)?.textContent ?? '';
+          await navigator.clipboard.writeText(text);
+          showToast('copied to clipboard');
+          return;
+        }
+
+          const genBtn = target.closest<HTMLButtonElement>('[data-gen]');
+          if (genBtn) {
+            const slug = genBtn.dataset.gen ?? '';
+            const handle = genBtn.dataset.handle ?? '';
+          const box = genBtn.closest<HTMLElement>('.card-gen');
+          const errEl = box?.querySelector<HTMLElement>('[data-gen-error]') ?? null;
+          const outEl = box?.querySelector<HTMLElement>('[data-gen-out]') ?? null;
+          const textEl = box?.querySelector<HTMLElement>('[data-gen-text]') ?? null;
+          const countEl = box?.querySelector<HTMLElement>('[data-gen-count]') ?? null;
+          const postBtn = box?.querySelector<HTMLAnchorElement>('[data-gen-post]') ?? null;
+          const original = genBtn.textContent ?? '✨ try it live';
+
+          genBtn.disabled = true;
+          genBtn.textContent = 'generating…';
+          errEl?.classList.add('hidden');
+          outEl?.classList.add('hidden');
+
+          try {
+            const res = await fetch('/api/generate', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ slug }),
+            });
+            const raw = await res.text();
+            let data: { tweet?: string; error?: string } = {};
+            try {
+              data = JSON.parse(raw);
+            } catch {
+              // non-JSON (e.g. HTML error page) — fall through to the generic message
+            }
+            if (!res.ok || !data.tweet) {
+              throw new Error(data.error || `generation failed (${res.status})`);
+            }
+
+            if (textEl) textEl.textContent = data.tweet;
+            const credit = handle ? `\n\ngenerated via canitweetlikethem.lol ${handle}` : '';
+            const share = data.tweet + credit;
+            const n = share.length;
+            if (countEl) {
+              countEl.textContent = `${n} / 280`;
+              countEl.classList.toggle('over', n > 280);
+            }
+            if (postBtn) {
+              postBtn.href = 'https://x.com/intent/post?text=' + encodeURIComponent(share);
+            }
+            outEl?.classList.remove('hidden');
+          } catch (err) {
+            if (errEl) {
+              errEl.textContent =
+                '⚠ ' + (err instanceof Error ? err.message : 'something went wrong');
+              errEl.classList.remove('hidden');
+            }
+          } finally {
+            genBtn.disabled = false;
+            genBtn.textContent = original;
+          }
+          return;
+        }
+
+        const voteBtn = target.closest<HTMLButtonElement>('.vote button');
+        if (voteBtn) {
+          const wrap = voteBtn.closest<HTMLElement>('[data-vote]');
+          if (!wrap) return;
+          const slug = wrap.dataset.slug ?? '';
+          const dir = voteBtn.dataset.dir === 'down' ? 'down' : 'up';
+
+          try {
+            const res = await fetch('/api/vote', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ slug, dir }),
+            });
+            if (!res.ok) throw new Error();
+            const data = (await res.json()) as { score: number; userVote: number };
+
+            const scoreEl = wrap.querySelector('.score');
+            if (scoreEl) scoreEl.textContent = String(data.score);
+
+            wrap.querySelector('.up')?.classList.toggle('on', data.userVote === 1);
+            wrap.querySelector('.down')?.classList.toggle('on', data.userVote === -1);
+          } catch {
+            showToast('vote failed — try again');
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

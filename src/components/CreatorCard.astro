@@ -1,0 +1,57 @@
+---
+import type { Creator } from '../lib/creators';
+import { avatarUrl } from '../lib/creators';
+
+interface Props {
+  creator: Creator;
+  score: number;
+  userVote: number;
+  rank: number;
+}
+
+const { creator, score, userVote, rank } = Astro.props;
+const hook = creator.voice.hooks[0] ?? '';
+const pic = avatarUrl(creator.slug);
+---
+
+<article class="card" data-name={`${creator.name} ${creator.handle} ${creator.tagline}`.toLowerCase()}>
+  <span class="rank">{String(rank).padStart(2, '0')}</span>
+  <div class="card-top">
+    <a href={`/${creator.slug}`} class="avatar" aria-hidden="true">
+      {pic ? <img src={pic} alt="" loading="lazy" /> : creator.emoji}
+    </a>
+    <div class="card-id">
+      <a href={`/${creator.slug}`} class="card-name">{creator.name}</a>
+      <div class="card-handle">{creator.handle} · {creator.platforms.join(', ')}</div>
+    </div>
+  </div>
+
+  <p class="card-tagline">{creator.tagline}</p>
+  {hook && <p class="card-hook">"{hook}"</p>}
+
+  <div class="meta-chips">
+    <span class="mchip cat">{creator.category}</span>
+  </div>
+
+  <div class="card-gen">
+    <button class="btn btn-sm btn-primary" data-gen={creator.slug} data-handle={creator.handle}>✨ try it live</button>
+    <p class="gen-error hidden" data-gen-error></p>
+    <div class="card-gen-out hidden" data-gen-out>
+      <p class="tweet-text" data-gen-text id={`card-tweet-${creator.slug}`}></p>
+      <div class="gen-actions">
+        <span class="charcount" data-gen-count></span>
+        <button class="btn btn-sm" data-copy={`#card-tweet-${creator.slug}`}>copy</button>
+        <a class="btn btn-sm btn-primary" data-gen-post target="_blank" rel="noopener">𝕏 post ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-foot">
+    <div class="vote" data-vote data-slug={creator.slug}>
+      <button class={`up${userVote === 1 ? ' on' : ''}`} data-dir="up" aria-label={`upvote ${creator.name}`}>▲</button>
+      <span class="score">{score.toLocaleString()}</span>
+      <button class={`down${userVote === -1 ? ' on' : ''}`} data-dir="down" aria-label={`downvote ${creator.name}`}>▼</button>
+    </div>
+    <a href={`/${creator.slug}`} class="btn btn-sm">get skill →</a>
+  </div>
+</article>

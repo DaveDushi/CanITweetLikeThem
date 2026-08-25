@@ -1,0 +1,13 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "canitweetlikethem-agent",
+	"account_id": "972f8c0c21865ac5fa34b14cfb73479e",
+	// No "main" here: @flue/vite owns the entry (scanned from src/). Plain
+	// wrangler flows (deploy, multi-config dev) must use the generated
+	// dist/canitweetlikethem_agent/wrangler.json, which pins main to the
+	// freshly built bundle.
+	"compatibility_date": "2026-06-01",
+	"compatibility_flags": ["nodejs_compat"],
+	"observability": { "traces": { "enabled": true } },
+	"migrations": [{ "tag": "flue-class-FlueTweetWriterAgent", "new_sqlite_classes": ["FlueTweetWriterAgent"] }]
+}

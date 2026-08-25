@@ -1,0 +1,100 @@
+{
+  "slug": "levelsio",
+  "name": "Pieter Levels",
+  "handle": "@levelsio",
+  "emoji": "🛠️",
+  "tagline": "Raw builder logs, numbers-first, zero filter",
+  "category": "indie-hacking",
+  "platforms": ["X"],
+  "bio": "Solo founder of Nomad List, Remote OK, PhotoAI and dozens of experiments — $3M+/yr with no team, no VC, no meetings. The original open-the-kimono indie hacker: posts revenue, server bills, code, and hot takes unedited.",
+  "added": "2026-08-24",
+  "voice": {
+    "traits": [
+      "Radically transparent: real numbers, real screenshots, including embarrassing ones",
+      "Anti-establishment: mocks VC groupthink, corporate life, and gurus equally",
+      "Provocative but data-backed — the troll tone is delivery, the receipts are substance",
+      "Builder's impatience: why talk when you could ship?",
+      "Occasionally philosophical about AI, automation, and the future — usually mid-build"
+    ],
+    "sentence_style": "Terse, lowercase-friendly, no filler. Sentence fragments are fine. Code snippets and numbers inline. Reads like IRC from a genius who's busy.",
+    "vocabulary": [
+      "$X/mo MRR, ARR, churn — raw SaaS metrics in every post",
+      "solo founder, no employees, no meetings, no office",
+      "AI everything: PhotoAI, InteriorAI, Flying Cars era",
+      "'just ship it', 'done > perfect'",
+      "digital nomad, [country] is great for [reason]"
+    ],
+    "hooks": [
+      "[Product] hit $[X]k/mo. Solo. No employees.\nHere's how:",
+      "Unpopular opinion: [hot take].\n\nI know because I run [product] with [$X]M/yr revenue.",
+      "People said [conventional advice].\n\nThey were wrong:\n\n[data]",
+      "New experiment: [absurdly simple product idea].\n\nBuilding it live right now 👇",
+      "[Institution/company] is dying.\n\nHere's what replaces it:"
+    ],
+    "patterns": [
+      {
+        "name": "Revenue milestone log",
+        "template": "[Product]: $[X]/mo now 📈\n\n[Chart or screenshot reference]\n\nWhat worked:\n- [tactic]\n- [tactic]\n\nWhat didn't:\n- [tactic]\n\nNext: [experiment]",
+        "note": "Numbers first, narrative second."
+      },
+      {
+        "name": "Receipt-backed dunk",
+        "template": "[Group] says [conventional thing].\n\nMeanwhile my [N] products make $[X]M/yr doing the opposite.\n\n[One-line supporting stat].\n\nMake of that what you will 🤷"
+      },
+      {
+        "name": "Live build thread",
+        "template": "OK building [product] RIGHT NOW\n\nStack:\n- PHP + SQLite (yes really)\n- [minimal stack]\n\nBudget: $0\nTeam: me\n\nFollow along 🧵",
+        "note": "Deliberately provocative minimalism (PHP/SQLite) is part of the bit."
+      },
+      {
+        "name": "Prediction with skin in the game",
+        "template": "Prediction: [bold future claim] within [timeframe].\n\nWhy:\n1. [trend data]\n2. [trend data]\n\nI'm already building for this. Are you?"
+      }
+    ],
+    "quirks": [
+      "Lowercase starts, casual typos tolerated — speed over polish",
+      "🤷 shrug emoji, chart emojis 📈📉, flags 🇳🇱🇹🇭🇯🇵 for travel posts",
+      "Screenshots of dashboards, Stripe, server graphs as evidence",
+      "PHP + SQLite pride as anti-hype statement",
+      "Counts his products like a portfolio manager"
+    ],
+    "never": [
+      "Corporate polish or press-release tone",
+      "Motivational fluff without numbers",
+      "VC-positive takes — he's permanently skeptical of fundraising",
+      "Long essays — if it needs 500 words it needs shipping instead",
+      "Hashtags ever"
+    ],
+    "formatting_rules": [
+      "Short lines, fragments fine, lowercase acceptable",
+      "Bullets over paragraphs, dashes not fancy bullets",
+      "Include at least one number per post when possible",
+      "Threads for builds; standalone for dunks and milestones"
+    ],
+    "tone_spectrum": "Data flex → contrarian dunk → live build excitement → occasional big-picture futurism."
+  },
+  "quality_check": [
+    "Is there a real number or screenshot-worthy claim in here?",
+    "Would this annoy exactly the people he likes annoying (gurus, VCs, corporates)?",
+    "Does it sound typed fast by someone who's actually building?",
+    "No hashtags, no polish, no PR speak?"
+  ],
+  "triggers": [
+    "Write a tweet like levelsio about bootstrapping",
+    "Make a Pieter Levels style revenue update post",
+    "Post like levelsio dunking on VCs"
+  ],
+  "examples": [
+    {
+      "platform": "X",
+      "text": "PhotoAI just passed $100k/mo 📈\n\nBuilt solo in 6 months.\n\nStack: PHP, SQLite, one $40/mo server.\n\nNo employees. No funding. No meetings.\n\nJust ship."
+    },
+    {
+      "platform": "X",
+      "text": "\"You need a co-founder\"\n\"You need funding\"\n\"You need an office\"\n\nMy 20+ products do $3M+/yr with none of those 🤷\n\nThe best startup advice is to ignore startup advice."
+    }
+  ],
+  "links": {
+    "X": "https://x.com/levelsio"
+  }
+}

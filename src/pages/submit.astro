@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+
+const schemaExample = `{
+  "slug": "florin-pop",
+  "name": "Florin Pop",
+  "handle": "@FlorinPop17",
+  "emoji": "🫶",
+  "tagline": "Casual indie hacker living the soft life",
+  "category": "indie-hacking",
+  "platforms": ["X"],
+  "bio": "Romanian maker, ~200k followers, currently on a health sabbatical...",
+  "added": "2026-08-24",
+  "voice": {
+    "traits": ["Extremely casual...", "..."],
+    "sentence_style": "Short sentences, natural line breaks...",
+    "emoji_usage": "Heavy but natural. Favorites: 🤭 ☠️ 💪 🫶",
+    "vocabulary": ["padel", "freedom > money", "..."],
+    "hooks": ["What would you do if...🤔", "..."],
+    "patterns": [
+      {
+        "name": "Daily activity log",
+        "template": "1h gym\\n3h padel (2 games)\\n20,000 steps later… 🤭",
+        "note": "His most frequent format right now"
+      }
+    ],
+    "quirks": ["Ends posts with a single emoji"],
+    "never": ["Corporate speak", "Hashtags"],
+    "formatting_rules": ["Line breaks over paragraphs", "Under 280 chars"]
+  },
+  "quality_check": ["Would this sound natural from him?"],
+  "triggers": ["Write a Florin Pop style post about rest"],
+  "examples": [{ "platform": "X", "text": "The biggest flex isn't money. It's free time." }],
+  "links": { "X": "https://x.com/FlorinPop17" }
+}`;
+---
+
+<Base title="Submit a creator · Can I Tweet Like Them?">
+  <div class="wrap prose">
+    <h1>Add a creator</h1>
+    <p>
+      Skills are just JSON files in <code>data/creators/</code> — one file per creator, contributed
+      by PR. No code required. If you can fill out a template, you can ship a skill.
+    </p>
+
+    <h2 class="section-title">how it works</h2>
+    <ol>
+      <li><span class="step-num">1</span><strong style="color:var(--text);">Fork the repo</strong> and create <code>data/creators/&lt;slug&gt;.json</code></li>
+      <li><span class="step-num">2</span><strong style="color:var(--text);">Study their last ~50 posts.</strong> The better the voice DNA, the better the clone — and the more votes it gets.</li>
+      <li><span class="step-num">3</span><strong style="color:var(--text);">Open a PR.</strong> Merged skills go live instantly and start collecting votes.</li>
+    </ol>
+
+    <h2 class="section-title">the schema</h2>
+    <div class="skill-viewer">
+      <div class="skill-toolbar">
+        <span class="skill-filename">data/creators/&lt;slug&gt;.json</span>
+        <div class="skill-actions">
+          <button class="btn btn-sm" data-copy="#schema-example">copy</button>
+        </div>
+      </div>
+      <pre><code id="schema-example">{schemaExample}</code></pre>
+    </div>
+
+    <h2 class="section-title">field notes</h2>
+    <ul>
+      <li><code>slug</code> — lowercase-with-dashes, becomes the URL (<code>/florin-pop</code>)</li>
+      <li>Votes are real and start at 0 — no seeding, the internet decides</li>
+      <li>Drop a profile pic at <code>public/avatars/&lt;slug&gt;.jpg</code> to replace the emoji avatar</li>
+      <li><code>voice.patterns[].template</code> — literal skeletons with [placeholders]. Copy-paste friendly is the goal.</li>
+      <li><code>voice.never</code> — the fastest way to ruin a clone is missing what they'd never say. Be thorough here.</li>
+      <li><code>quality_check</code> — pre-flight rules the AI runs before responding. These make or break output quality.</li>
+      <li>Parody intent only — every skill page credits the creator's real handle.</li>
+    </ul>
+  </div>
+</Base>
