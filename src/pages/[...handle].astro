@@ -39,6 +39,8 @@ if (voterId) {
 }
 
 const skillMd = buildSkillMd(creator);
+const installCmd = `npx skills add ${Astro.url.origin}/api/skill/${creator.slug}`;
+const firstName = creator.name.split(' ')[0];
 const pic = avatarUrl(creator);
 const rank = [...scores.entries()].sort((a, b) => b[1] - a[1]).findIndex(([s]) => s === creator.slug) + 1;
 
