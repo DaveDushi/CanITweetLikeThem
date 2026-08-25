@@ -8,3 +8,5 @@ data/*.db-shm
 .env
 .DS_Store
 .dev.vars*
+agent-dev.log
+wrangler.jsonc
